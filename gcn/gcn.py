@@ -87,6 +87,16 @@ class GCN(nn.Module):
             h = layer(h)
         return h
 
+def evaluate(model, features, labels, mask):
+    model.eval()
+    with torch.no_grad():
+        logits = model(features)
+        logits = logits[mask]
+        labels = labels[mask]
+        _, indices = torch.max(logits, dim=1)
+        correct = torch.sum(indices == labels)
+        return correct.item() * 1.0 / len(labels)
+
 def main(args):
     # load and preprocess dataset
     if args.dataset == "synthetic":
@@ -156,8 +166,7 @@ def main(args):
                                  weight_decay=args.weight_decay)
 
     # initialize graph
-    start = time.time()
-    for epoch in range(args.n_epochs):
+    for epoch in range(args.n_epochs + 1):
         model.train()
         optimizer.zero_grad()
         # forward
@@ -167,8 +176,14 @@ def main(args):
         loss.backward()
         optimizer.step()
         loss = loss.item()
+        if epoch == 0:
+            # Skip first epoch for warm up
+            torch.cuda.synchronize()
+            start = time.time()
     end = time.time()
     print("{:.4f}".format(end-start))
+
+    print(evaluate(model, features, labels, test_mask))
 
 
 if __name__ == '__main__':
