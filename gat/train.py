@@ -116,7 +116,7 @@ def main(args):
     end = time.time()
 
     acc = evaluate(model, features, labels, test_mask)
-    print("{:.4f} s\n {:.4f}".format(end - start, acc))
+    print("Accuracy: {:.4f}\n{:.4f}".format(acc, end - start))
 
 
 if __name__ == '__main__':

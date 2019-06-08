@@ -181,9 +181,9 @@ def main(args):
             torch.cuda.synchronize()
             start = time.time()
     end = time.time()
-    print("{:.4f}".format(end-start))
 
     print(evaluate(model, features, labels, test_mask))
+    print("{:.4f}".format(end-start))
 
 
 if __name__ == '__main__':

@@ -3,7 +3,6 @@
 print_help() {
     echo "Usage : "
     echo "  --hsize=<hsize>        hidden size"
-    echo "  --degree=<degree>      Out degrees for synthetic power law graph"
     echo "  --epochs=<epochs>      Epochs to train"
     echo ""
     exit 1
@@ -22,7 +21,6 @@ unknown_option() {
 ########################################
 
 hsize=16
-degree=10
 epochs=200
 
 #########################################
@@ -33,7 +31,6 @@ epochs=200
 while [ $# -gt 0 ]
 do case $1 in
     --hsize=*)          hsize=${1##--hsize=} ;;
-    --degree=*)         degree=${1##--degree=} ;;
     --epochs=*)         epochs=${1##--epochs=} ;;
     *) unknown_option $1 ;;
 esac
@@ -44,61 +41,43 @@ echo "Real datasets"
 echo "Time to train 200 epochs with hidden size ${hsize}:"
 
 echo "Cora:"
-time_elapsed=`python3 gcn_spmv.py --dataset cora        \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
+time_elapsed=`python3 gcn.py --dataset cora        \
+                             --n-hidden ${hsize}   \
+                             --n-epochs ${epochs}  \
+                             --gpu 0               \
+                             2>/dev/null | tail -n 1`
 echo "${time_elapsed} seconds"
 echo "CiteSeer:"
-time_elapsed=`python3 gcn_spmv.py --dataset citeseer    \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
+time_elapsed=`python3 gcn.py --dataset citeseer    \
+                             --n-hidden ${hsize}   \
+                             --n-epochs ${epochs}  \
+                             --gpu 0               \
+                             2>/dev/null | tail -n 1`
 echo "${time_elapsed} seconds"
 echo "PubMed:"
-time_elapsed=`python3 gcn_spmv.py --dataset pubmed      \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
+time_elapsed=`python3 gcn.py --dataset pubmed      \
+                             --n-hidden ${hsize}   \
+                             --n-epochs ${epochs}  \
+                             --gpu 0               \
+                             2>/dev/null | tail -n 1`
 echo "${time_elapsed} seconds"
-
 echo
 
-echo "Synthetic graphs with in degree ${degree} and power-law out degree"
-echo "Time to train 200 epochs with hidden size ${hsize}:"
-
-nodes=10000
+echo "Erdos-Reyi Synthetic graph"
+###############################################################################
+# Adjust the following three parameters to see how well DGL perform on
+# different workload
+nodes=32000
+p=0.0008
+hsize=16
 echo "Number of nodes: ${nodes}"
-time_elapsed=`python3 gcn_spmv.py --dataset synthetic   \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --n-nodes ${nodes}    \
-                                  --degree ${degree}    \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
-echo "${time_elapsed} seconds"
-
-nodes=50000
-echo "Number of nodes: ${nodes}"
-time_elapsed=`python3 gcn_spmv.py --dataset synthetic   \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --n-nodes ${nodes}    \
-                                  --degree ${degree}    \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
-echo "${time_elapsed} seconds"
-
-nodes=100000
-echo "Number of nodes: ${nodes}"
-time_elapsed=`python3 gcn_spmv.py --dataset synthetic   \
-                                  --n-hidden ${hsize}   \
-                                  --n-epochs ${epochs}  \
-                                  --n-nodes ${nodes}    \
-                                  --degree ${degree}    \
-                                  --gpu 0               \
-                                  2>/dev/null | tail -n 1`
+echo "Density: ${p}"
+echo "Hidden size: ${hsize}"
+time_elapsed=`python3 gcn.py --dataset syn         \
+                             --n-hidden ${hsize}   \
+                             --n-epochs ${epochs}  \
+                             --syn-gnp-n ${nodes}  \
+                             --syn-gnp-p ${p}      \
+                             --gpu 0               \
+                             2>/dev/null | tail -n 1`
 echo "${time_elapsed} seconds"
