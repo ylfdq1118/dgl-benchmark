@@ -11,11 +11,6 @@ RUN bash /install/ubuntu_install_python.sh
 COPY install/ubuntu_install_python_package.sh /install/ubuntu_install_python_package.sh
 RUN bash /install/ubuntu_install_python_package.sh
 
-# install dgl (latest)
-RUN cd /root && git clone --recursive https://github.com/dmlc/dgl.git
-RUN cd /root/dgl && mkdir build && cd build && cmake .. && make -j$(nproc)
-RUN cd /root/dgl/python && python3 setup.py build_ext --inplace && python3 setup.py install
-
 # add user
 RUN useradd -ms /bin/bash user
 
