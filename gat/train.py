@@ -109,10 +109,12 @@ def main(args):
 
         if epoch == 1:
             # skip for epoch for warm up
-            torch.cuda.synchronize()
+            if cuda:
+                torch.cuda.synchronize()
             start = time.time()
 
-    torch.cuda.synchronize()
+    if cuda:
+        torch.cuda.synchronize()
     end = time.time()
 
     acc = evaluate(model, features, labels, test_mask)

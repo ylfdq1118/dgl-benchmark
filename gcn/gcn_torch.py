@@ -179,8 +179,11 @@ def main(args):
         loss = loss.item()
         if epoch == 0:
             # Skip first epoch for warm up
-            torch.cuda.synchronize()
+            if cuda:
+                torch.cuda.synchronize()
             start = time.time()
+    if cuda:
+        torch.cuda.synchronize()
     end = time.time()
 
     print(evaluate(model, features, labels, test_mask))
