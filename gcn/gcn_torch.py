@@ -207,10 +207,6 @@ if __name__ == '__main__':
             help="number of hidden gcn layers")
     parser.add_argument("--weight-decay", type=float, default=5e-4,
             help="Weight for L2 loss")
-    parser.add_argument("--n-nodes", type=int, default=10000,
-            help="Number of nodes for synthetic power law graph")
-    parser.add_argument("--degree", type=int, default=10,
-            help="Out degree for synthetic power law graph")
     args = parser.parse_args()
     if args.dataset.startswith("reddit"):
         # use reddit dataset that already added self-loop
