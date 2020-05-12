@@ -4,7 +4,7 @@ apt-get update
 # python 3.6
 apt-get install -y software-properties-common
 
-add-apt-repository ppa:jonathonf/python-3.6
+add-apt-repository ppa:deadsnakes/ppa
 apt-get update
 apt-get install -y python3.6 python3.6-dev
 
